@@ -10,13 +10,11 @@ const port = process.env.PORT || 8000;
 const uploadDir = process.env.UPLOAD_DIR || process.argv[2] || process.cwd();
 
 function setRes(res, status, respType) {
-  /*
   res.status(status).set({
     'Access-Control-Allow-Origin' : '*',
     'Access-Control-Allow-Methods' : 'GET,POST,PUT,DELETE,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With, X-API-version'
   })
-  */
   return res.type(respType ? respType : 'application/octet-stream')
 }
 

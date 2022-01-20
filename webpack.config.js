@@ -8,4 +8,10 @@ module.exports = {
     filename: 'upload.js',
     path: path.resolve(__dirname, 'dist'),
   },
+  stats: {
+    colors: true,
+    modules: true,
+    reasons: true,
+    errorDetails: true
+  }
 };
