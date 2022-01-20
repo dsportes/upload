@@ -5,7 +5,7 @@ module.exports = {
   target: 'node',
   mode: 'development',
   output: {
-    filename: 'update.js',
+    filename: 'upload.js',
     path: path.resolve(__dirname, 'dist'),
   },
 };
