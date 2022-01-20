@@ -6,8 +6,8 @@ const path = require('path')
 const express = require('express')
 
 const dev = process.env.NODE_ENV === 'development'
-const port = process.env.PORT || 8000;
-const uploadDir = process.env.UPLOAD_DIR || process.argv[2] || process.cwd();
+const uploadDir = process.env.UPLOAD_DIR || process.argv[2] || process.cwd()
+const port = process.argv[3] ? parseInt(process.argv[3]) : 8000
 
 function setRes(res, status, respType) {
   res.status(status).set({
