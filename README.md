@@ -21,7 +21,12 @@ curl -X POST -H "Content-Type:application/octet-stream" --data-binary "@Daniel-1
 ## pkg
  Install : npm install -g pkg
 
- Dans dist : pkg upload.js
+ Dans dist : 
+ pkg -t node14-win upload.js
+ pkg -t node14-linux upload.js
 
- Créé trois exécutables pour linux, mac, windows
+ Créé des exécutables pour linux, windows (en x64).
+
+ Pb avec node16 sous windows 10.
+ 
  
