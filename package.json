@@ -5,7 +5,10 @@
     "build": "webpack"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "-": "^0.0.1",
+    "express": "^4.17.1",
+    "g": "^2.0.1",
+    "pkg": "^5.5.2"
   },
   "packageManager": "yarn@3.1.0",
   "devDependencies": {
