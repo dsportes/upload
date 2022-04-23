@@ -28,44 +28,48 @@ app.use('/', (req, res, next) => {
     next()
 })
 
-/**** ping du site ****/
-app.get('/ping', (req, res) => {
-  setRes(res, 200, 'text/plain').send(new Date().toISOString())
-})
-
-/**** liste les noms fichiers et folders figurant dans le folder donné après dir */
-app.use('/dir', async (req, res) => {
-  const d = req.url.substring(1)
-  const dir = path.resolve(uploadDir, d)
-  try {
-    const files = fs.readdirSync(dir)
-    const resp = files.join('\n')
-    setRes(res, 200, 'text/plain').send(resp)
-  } catch (e) {
-    setRes(res, 404, 'text/plain').send(e.toString())
-  }
+/**** retourne le contenu du fichier cité dans l'URL */
+app.use('/', async (req, res, next) => {
+  if (req.method === 'GET')
+    try {
+      const u = Buffer.from(req.url.substring(1), 'base64').toString('utf8')
+      const p = path.resolve(uploadDir, u)
+      const bytes = await fsp.readFile(p)
+      if (bytes) {
+        setRes(res, 200, 'application/octet-stream').send(bytes)
+      } else {
+        setRes(res, 404).send('Fichier non trouvé')
+      }
+    } catch (e) {
+      setRes(res, 404).send('Fichier non trouvé')
+    }
+    else next()
 })
 
 /**** upload le contenu binaire passé dans le body du POST en tant que fichier dont le path est donné après upload */
-app.use('/upload', async (req, res) => {
-  // push the data to body
-  const body = [];
-  req.on('data', (chunk) => {
-    body.push(chunk);
-  }).on('end', async () => {
-    const buf= Buffer.concat(body)
-    try {
-      const i = req.url.lastIndexOf('/')
-      const dir = path.resolve(uploadDir, req.url.substring(1, i))
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })  
-      const fp = path.resolve(uploadDir, req.url.substring(1))
-      await fsp.writeFile(fp, buf)
-      if (dev) console.info("Fichier chargé [" + fp + '] ' + buf.length + ' bytes')
-      setRes(res, 200, 'text/plain').send('OK')
-    } catch (error){
-      setRes(res, 500, 'text/plain').send(error.toString())
-    }
-  })
+app.use('/', async (req, res, next) => {
+  if (req.method === 'PUT') {
+    // push the data to body
+    const body = [];
+    req.on('data', (chunk) => {
+      body.push(chunk);
+    }).on('end', async () => {
+      const buf= Buffer.concat(body)
+      try {
+        const u = Buffer.from(req.url.substring(1), 'base64').toString('utf8')
+        const i = u.lastIndexOf('/')
+        const dir = path.resolve(uploadDir, u.substring(0, i))
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })  
+        const fp = path.resolve(uploadDir, u)
+        await fsp.writeFile(fp, buf)
+        if (dev) console.info("Fichier chargé [" + fp + '] ' + buf.length + ' bytes')
+        setRes(res, 200, 'text/plain').send('OK')
+      } catch (error){
+        setRes(res, 500, 'text/plain').send(error.toString())
+      }
+    })
+  }
+  else next()
 })
 
 try {
