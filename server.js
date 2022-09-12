@@ -6,8 +6,8 @@ const path = require('path')
 const express = require('express')
 
 const dev = process.env.NODE_ENV === 'development'
-const uploadDir = process.env.UPLOAD_DIR || process.argv[2] || process.cwd()
-const port = process.argv[3] ? parseInt(process.argv[3]) : 8000
+const uploadDir = process.env.UPLOAD_DIR || process.cwd()
+const port = process.argv[2] ? parseInt(process.argv[2]) : 33666
 
 function setRes(res, status, respType) {
   res.status(status).set({
@@ -74,7 +74,7 @@ app.use('/', async (req, res, next) => {
 
 try {
   const server = http.createServer(app).listen(port, () => {
-    console.log('HTTP server running on port ' + port)
+    console.log('Serveur local UPLOAD prêt. Ecoute sur le port ' + port + '\nCtrl-C pour l\'arrêter')
   })
   server.on('error', (e) => { // les erreurs de création du server ne sont pas des exceptions
     console.error('server.js : HTTP error = ' + e.message)
