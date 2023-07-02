@@ -5,7 +5,7 @@ Run: node dist/upload.js 33666
 
 Le second paramètre est optionnel : 33666 par défaut
 
-Le directory courant par défaut ou le directory cité dans la variable UPLOAD_DIR récupère les chargements.
+Les uploads s'effectuent en relatif par rapport au directory courant.
 
 ## Commande de build webpack 
 npm run build

@@ -6,7 +6,7 @@ const path = require('path')
 const express = require('express')
 
 const dev = process.env.NODE_ENV === 'development'
-const uploadDir = process.env.UPLOAD_DIR || process.cwd()
+const uploadDir = process.cwd()
 const port = process.argv[2] ? parseInt(process.argv[2]) : 33666
 
 function setRes(res, status, respType) {
@@ -32,13 +32,17 @@ app.use('/', (req, res, next) => {
 app.use('/', async (req, res, next) => {
   if (req.method === 'GET')
     try {
-      const u = Buffer.from(req.url.substring(1), 'base64').toString('utf8')
-      const p = path.resolve(uploadDir, u)
-      const bytes = await fsp.readFile(p)
-      if (bytes) {
-        setRes(res, 200, 'application/octet-stream').send(bytes)
+      if (req.url === '/ping') {
+        setRes(res, 200, 'text/plain').send(new Date().toISOString())
       } else {
-        setRes(res, 404).send('Fichier non trouvé')
+        const u = Buffer.from(req.url.substring(1), 'base64').toString('utf8')
+        const p = path.resolve(uploadDir, u)
+        const bytes = await fsp.readFile(p)
+        if (bytes) {
+          setRes(res, 200, 'application/octet-stream').send(bytes)
+        } else {
+          setRes(res, 404).send('Fichier non trouvé')
+        }
       }
     } catch (e) {
       setRes(res, 404).send('Fichier non trouvé')
