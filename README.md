@@ -11,7 +11,10 @@ Les uploads s'effectuent en relatif par rapport au directory courant.
 npm run build
 
 ## Traite les GET et les PUT
+Par sécurité le GET (SAUF le `ping`) est commenté: le PUT permet d'écrire des fichiers, `upload` ne permet pas de les relire.
+
 - l'URL est donnée en base64 URL après http://localhost:33666/
+- le ping est http://localhost:33666/ping
 - pour un PUT, le contenu du fichier est dans le body de la requête
 
 ## Test par cURL

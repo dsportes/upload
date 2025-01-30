@@ -34,7 +34,9 @@ app.use('/', async (req, res, next) => {
     try {
       if (req.url === '/ping') {
         setRes(res, 200, 'text/plain').send(new Date().toISOString())
-      } else {
+      } 
+      /*
+      else {
         const u = Buffer.from(req.url.substring(1), 'base64').toString('utf8')
         const p = path.resolve(uploadDir, u)
         if (!p.startsWith(uploadDir)) throw 'ex1'
@@ -45,6 +47,7 @@ app.use('/', async (req, res, next) => {
           setRes(res, 404).send('Fichier non trouvé')
         }
       }
+      */
     } catch (e) {
       setRes(res, 404).send(e === 'ex1' ? 'Path interdit' : 'Fichier non trouvé')
     }
