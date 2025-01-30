@@ -6,7 +6,7 @@ const path = require('path')
 const express = require('express')
 
 const dev = process.env.NODE_ENV === 'development'
-const uploadDir = process.cwd()
+const uploadDir = path.resolve(process.cwd())
 const port = process.argv[2] ? parseInt(process.argv[2]) : 33666
 
 function setRes(res, status, respType) {
@@ -37,6 +37,7 @@ app.use('/', async (req, res, next) => {
       } else {
         const u = Buffer.from(req.url.substring(1), 'base64').toString('utf8')
         const p = path.resolve(uploadDir, u)
+        if (!p.startsWith(uploadDir)) throw 'ex1'
         const bytes = await fsp.readFile(p)
         if (bytes) {
           setRes(res, 200, 'application/octet-stream').send(bytes)
@@ -45,7 +46,7 @@ app.use('/', async (req, res, next) => {
         }
       }
     } catch (e) {
-      setRes(res, 404).send('Fichier non trouvé')
+      setRes(res, 404).send(e === 'ex1' ? 'Path interdit' : 'Fichier non trouvé')
     }
     else next()
 })
@@ -63,13 +64,16 @@ app.use('/', async (req, res, next) => {
         const u = Buffer.from(req.url.substring(1), 'base64').toString('utf8')
         const i = u.lastIndexOf('/')
         const dir = path.resolve(uploadDir, u.substring(0, i))
+        if (!dir.startsWith(uploadDir))
+          throw 'Path [' + u + '] interdit'
         if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })  
         const fp = path.resolve(uploadDir, u)
         await fsp.writeFile(fp, buf)
         if (dev) console.info("Fichier chargé [" + fp + '] ' + buf.length + ' bytes')
         setRes(res, 200, 'text/plain').send('OK')
       } catch (error){
-        setRes(res, 500, 'text/plain').send(error.toString())
+        const x = error.toString()
+        setRes(res, 500, 'text/plain').send(x)
       }
     })
   }
